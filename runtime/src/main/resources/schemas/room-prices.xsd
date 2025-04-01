@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://partners.mn/runtime/soap"
+           xmlns="http://partners.mn/runtime/soap"
+           elementFormDefault="qualified">
+
+    <xs:element name="GetAllRoomPricesRequest">
+        <xs:complexType>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetAllRoomPricesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="hotels" type="HotelRoomPrice" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="HotelRoomPrice">
+        <xs:sequence>
+            <xs:element name="hotelId" type="xs:long"/>
+            <xs:element name="hotelName" type="xs:string"/>
+            <xs:element name="roomId" type="xs:long"/>
+            <xs:element name="roomType" type="xs:string"/>
+            <xs:element name="totalRoomsAmount" type="xs:int"/>
+            <xs:element name="price" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
