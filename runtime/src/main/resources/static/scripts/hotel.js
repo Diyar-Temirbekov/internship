@@ -29,49 +29,61 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
-    document.querySelectorAll('.editable').forEach(element => {
-        element.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
+    window.openEditHotelModal = function(button) {
+        const row = button.closest('tr');
+        const cells = row.getElementsByTagName('td');
 
-                const hotelId = this.getAttribute('data-hotel-id');
-                const field = this.getAttribute('data-field');
-                const value = this.innerText.trim();
-
-                if (!value) {
-                    showNotification('Поле не может быть пустым.');
-                    return;
-                }
-
-                const updateData = {hotelId: Number(hotelId)};
-                if (field === 'name') {
-                    updateData.hotelName = value;
-                } else if (field === 'address') {
-                    updateData.hotelAddress = value;
-                }
+        const hotelId = cells[0].innerText.trim();
+        const hotelName = cells[1].innerText.trim();
+        const hotelAddress = cells[2].innerText.trim();
+        const rooms = cells[3].innerText.trim();
 
 
-                fetch(`api/hotels`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData)
+        // Заполняем данные в форму
+        document.getElementById('editHotelId').value = hotelId;
+        document.getElementById('editHotelName').value = hotelName;
+        document.getElementById('editHotelAddress').value = hotelAddress;
+        document.getElementById('editRooms').value = rooms;
+
+        // Показываем модальное окно
+        const editModal = new bootstrap.Modal(document.getElementById('editHotelModal'));
+        editModal.show();
+    };
+
+    const editHotelForm = document.getElementById('editHotelForm');
+    if (editHotelForm) {
+        editHotelForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const editHotelId = document.getElementById('editHotelId').value;
+            const editHotelName = document.getElementById('editHotelName').value.trim();
+            const editHotelAddress = document.getElementById('editHotelAddress').value.trim();
+            const editRooms = document.getElementById('editRooms').value.trim();
+
+            fetch('/api/hotels', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    hotelId: editHotelId,
+                    hotelName: editHotelName,
+                    hotelAddress: editHotelAddress,
+                    rooms: editRooms
                 })
-                    .then(response => {
-                        if (response.ok) {
-                            showNotification('Отель успешно обновлен.');
-                            this.blur();
-                            this.innerText = value;
-                        } else {
-                            showNotification('Ошибка при обновлении отеля.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Ошибка:', error);
+            })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification('Отель успешно обновлен.');
+                        window.location.reload();
+                    } else {
                         showNotification('Ошибка при обновлении отеля.');
-                    });
-            }
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка при обновлении отеля.');
+                });
         });
-    });
+    }
 
     window.deleteHotel = function (button) {
         const hotelId = button.getAttribute('data-hotel-id');

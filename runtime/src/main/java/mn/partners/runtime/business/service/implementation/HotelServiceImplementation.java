@@ -52,9 +52,18 @@ public class HotelServiceImplementation implements HotelService {
         hotelRepository.deleteById(id);
     }
 
+    public HotelEntity getHotelByName(String name) {
+        if (name == null) {
+            throw new BusinessException("Имя отеля не должен быть null");
+        }
+
+        return hotelRepository.findByName(name)
+                .orElseThrow(() -> new BusinessException("Отель не найден"));
+    }
+
     public HotelEntity getHotelById(Long id) {
         if (id == null) {
-            throw new BusinessException("HotelId не должен быть null");
+            throw new BusinessException("ID отеля не должен быть null");
         }
 
         return hotelRepository.findById(id)

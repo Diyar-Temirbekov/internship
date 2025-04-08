@@ -16,6 +16,8 @@ public interface HotelService {
 
     void deleteHotel(Long id);
 
+    HotelEntity getHotelByName(String name);
+
     HotelEntity getHotelById(Long id);
 
     HotelResponseDTO getHotelDTOById(Long id);

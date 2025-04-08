@@ -8,7 +8,7 @@ public class HotelRoomResponseDTO {
 
     private Long id;
 
-    private Long hotelId;
+    private String hotelName;
 
     private RoomType roomType;
 

@@ -12,8 +12,8 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-primary">Комнаты</h2>
         <div>
-            <a class="btn btn-primary me-2" th:href="@{toHotels}">Вернуться к отелям</a>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRoomModal">Добавить комнату</button>
+            <a class="btn btn-secondary me-2" th:href="@{toHotels}">Вернуться к отелям</a>
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addRoomModal">Добавить комнату</button>
         </div>
     </div>
 
@@ -21,23 +21,24 @@
         <thead class="table-primary">
         <tr>
             <th>ID</th>
-            <th>ID отеля</th>
+            <th>Название отеля</th>
             <th>Тип комнаты</th>
             <th>Цена</th>
             <th>Общее количество</th>
             <th>Забронированное количество</th>
-            <th>Удалить</th>
+            <th>Действие</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="room : ${rooms}">
             <td th:text="${room.id}"></td>
-            <td th:text="${room.hotelId}" contenteditable="true" class="editable" th:attr="data-room-id=${room.id}" data-field="hotelId"></td>
-            <td th:text="${room.roomType}" contenteditable="true" class="editable" th:attr="data-room-id=${room.id}" data-field="roomType"></td>
-            <td th:text="${room.price}" contenteditable="true" class="editable" th:attr="data-room-id=${room.id}" data-field="price"></td>
-            <td th:text="${room.totalCountOfRooms}" contenteditable="true" class="editable" th:attr="data-room-id=${room.id}" data-field="totalCountOfRooms"></td>
+            <td th:text="${room.hotelName}"></td>
+            <td th:text="${room.roomType}"></td>
+            <td th:text="${room.price}"></td>
+            <td th:text="${room.totalCountOfRooms}"></td>
             <td th:text="${room.reservedRooms}"></td>
             <td>
+                <button class="btn btn-primary me-2" th:attr="data-room-id=${room.id}" onclick="openUpdateModal(this)">Обновить</button>
                 <button class="btn btn-danger" th:attr="data-room-id=${room.id}" onclick="deleteRoom(this)">Удалить</button>
             </td>
         </tr>
@@ -55,17 +56,12 @@
             <div class="modal-body">
                 <form id="addRoomForm">
                     <div class="mb-3">
-                        <label for="hotelId" class="form-label">ID отеля</label>
-                        <input type="number" class="form-control" id="hotelId" required>
+                        <label for="hotelName" class="form-label">Название отеля</label>
+                        <input type="text" class="form-control" id="hotelName" required>
                     </div>
                     <div class="mb-3">
                         <label for="roomType" class="form-label">Тип комнаты</label>
-                        <select class="form-control" id="roomType" required>
-                            <option th:each="type : ${T(mn.partners.runtime.common.enums.RoomType).values()}"
-                                th:value="${type}"
-                                th:text="${type}">
-                            </option>
-                        </select>
+                        <input type="text" class="form-control" id="roomType" required>
                     </div>
                     <div class="mb-3">
                         <label for="price" class="form-label">Цена</label>
@@ -76,6 +72,39 @@
                         <input type="number" class="form-control" id="totalCountOfRooms" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Добавить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editRoomModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Изменить комнату</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editRoomForm">
+                    <input type="hidden" id="editRoomId" name="roomId">
+                    <div class="mb-3">
+                        <label for="editHotelName" class="form-label">Название отеля</label>
+                        <input type="text" class="form-control" id="editHotelName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRoomType" class="form-label">Тип комнаты</label>
+                        <input type="text" class="form-control" id="editRoomType" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPrice" class="form-label">Цена</label>
+                        <input type="number" class="form-control" id="editPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTotalCountOfRooms" class="form-label">Общее количество</label>
+                        <input type="number" class="form-control" id="editTotalCountOfRooms" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Обновить</button>
                 </form>
             </div>
         </div>

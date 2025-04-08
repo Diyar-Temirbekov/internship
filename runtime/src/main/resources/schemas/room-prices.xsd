@@ -1,30 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="http://partners.mn/runtime/soap"
-           xmlns="http://partners.mn/runtime/soap"
-           elementFormDefault="qualified">
+           xmlns:tns="http://partners.mn/runtime/soap"
+           elementFormDefault="qualified"
+           targetNamespace="http://partners.mn/runtime/soap">
 
-    <xs:element name="GetAllRoomPricesRequest">
-        <xs:complexType>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="GetAllRoomPricesResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="hotels" type="HotelRoomPrice" maxOccurs="unbounded"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:complexType name="HotelRoomPrice">
-        <xs:sequence>
-            <xs:element name="hotelId" type="xs:long"/>
-            <xs:element name="hotelName" type="xs:string"/>
-            <xs:element name="roomId" type="xs:long"/>
-            <xs:element name="roomType" type="xs:string"/>
-            <xs:element name="totalRoomsAmount" type="xs:int"/>
-            <xs:element name="price" type="xs:double"/>
-        </xs:sequence>
+  <xs:element name="GetAllRoomPricesRequest">
+      <xs:complexType>
+          <xs:sequence/>
     </xs:complexType>
+  </xs:element>
+
+  <xs:element name="GetAllRoomPricesResponse" type="tns:getAllRoomPricesResponse"/>
+  <xs:element name="HotelRoomPrice" type="tns:hotelRoomPrice"/>
+  <xs:complexType name="getAllRoomPricesResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="hotels" type="tns:hotelRoomPrice"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="hotelRoomPrice">
+    <xs:sequence>
+      <xs:element name="hotelId" type="xs:long" minOccurs="1" nillable="false"/>
+      <xs:element name="hotelName" type="xs:string" minOccurs="1" nillable="false"/>
+      <xs:element name="roomId" type="xs:long" minOccurs="1" nillable="false"/>
+      <xs:element name="roomType" type="tns:RoomType" minOccurs="1" nillable="false"/>
+      <xs:element name="totalRoomsAmount" type="xs:int" minOccurs="1" nillable="false"/>
+      <xs:element name="price" type="xs:double" minOccurs="1" nillable="false"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="RoomType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="STANDARD"/>
+      <xs:enumeration value="SUPERIOR"/>
+      <xs:enumeration value="STUDIO"/>
+      <xs:enumeration value="FAMILY"/>
+      <xs:enumeration value="DELUXE"/>
+      <xs:enumeration value="SUITE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
 </xs:schema>

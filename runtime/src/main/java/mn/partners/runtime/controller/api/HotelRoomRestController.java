@@ -21,7 +21,7 @@ public class HotelRoomRestController {
     }
 
     @PutMapping
-    public ResponseEntity<HotelRoomResponseDTO> updateRoom(@RequestBody HotelRoomRequestDTO roomRequestDTO) {
+    public ResponseEntity<HotelRoomResponseDTO> updateRoom(@RequestBody @Valid HotelRoomRequestDTO roomRequestDTO) {
         return ResponseEntity.status(200).body(hotelRoomService.updateHotelRoom(roomRequestDTO));
     }
 

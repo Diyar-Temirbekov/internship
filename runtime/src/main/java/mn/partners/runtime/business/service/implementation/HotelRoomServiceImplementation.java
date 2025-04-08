@@ -26,7 +26,7 @@ public class HotelRoomServiceImplementation implements HotelRoomService {
     private final HotelService hotelService;
 
     public HotelRoomResponseDTO createRoom(HotelRoomRequestDTO hotelRoomRequestDTO) {
-        HotelEntity hotel = hotelService.getHotelById(hotelRoomRequestDTO.getHotelId());
+        HotelEntity hotel = hotelService.getHotelByName(hotelRoomRequestDTO.getHotelName());
         HotelRoomEntity hotelRoomEntity = hotelRoomMapper.toEntity(hotelRoomRequestDTO);
         hotelRoomEntity.setHotelEntity(hotel);
         hotelRoomEntity.setReservedRooms(0);
@@ -36,11 +36,11 @@ public class HotelRoomServiceImplementation implements HotelRoomService {
 
     public HotelRoomResponseDTO updateHotelRoom(HotelRoomRequestDTO hotelRoomRequestDTO) {
         HotelRoomEntity existingHotelRoom = getHotelRoomById(hotelRoomRequestDTO.getId());
-        if (hotelRoomRequestDTO.getHotelId() != null) {
-            existingHotelRoom.setHotelEntity(hotelService.getHotelById(hotelRoomRequestDTO.getHotelId()));
+        if (hotelRoomRequestDTO.getHotelName() != null) {
+            existingHotelRoom.setHotelEntity(hotelService.getHotelByName(hotelRoomRequestDTO.getHotelName()));
         }
         if (hotelRoomRequestDTO.getRoomType() != null) {
-            existingHotelRoom.setRoomType(RoomType.fromString(hotelRoomRequestDTO.getRoomType().name()));
+            existingHotelRoom.setRoomType(hotelRoomRequestDTO.getRoomType());
         }
         if (hotelRoomRequestDTO.getPrice() != null && hotelRoomRequestDTO.getPrice() >= 0) {
             existingHotelRoom.setPrice(hotelRoomRequestDTO.getPrice());
@@ -64,12 +64,12 @@ public class HotelRoomServiceImplementation implements HotelRoomService {
         hotelRoomRepository.deleteById(id);
     }
 
-    public HotelRoomEntity getByIdAndRoomType(Long roomId, String roomType) {
+    public HotelRoomEntity getByIdAndRoomType(Long roomId, RoomType roomType) {
         if (roomId == null || roomType == null) {
             throw new BusinessException("RoomId или RoomType не должны быть null");
         }
 
-        return hotelRoomRepository.findByHotelEntityIdAndRoomType(roomId, RoomType.fromString(roomType));
+        return hotelRoomRepository.findByHotelEntityIdAndRoomType(roomId, roomType);
     }
 
     public void saveRoomEntity(HotelRoomEntity hotelRoomEntity) {

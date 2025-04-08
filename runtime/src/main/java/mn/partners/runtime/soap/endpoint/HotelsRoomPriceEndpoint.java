@@ -5,6 +5,7 @@ import mn.partners.runtime.business.service.HotelRoomService;
 import mn.partners.runtime.soap.dto.service.GetAllRoomPricesRequest;
 import mn.partners.runtime.soap.dto.service.GetAllRoomPricesResponse;
 import mn.partners.runtime.soap.dto.service.HotelRoomPrice;
+import mn.partners.runtime.soap.dto.service.RoomType;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
@@ -30,7 +31,7 @@ public class HotelsRoomPriceEndpoint {
                     dto.setHotelId(room.getHotelEntity().getId());
                     dto.setHotelName(room.getHotelEntity().getName());
                     dto.setRoomId(room.getId());
-                    dto.setRoomType(room.getRoomType().toString());
+                    dto.setRoomType(RoomType.fromValue(room.getRoomType().toString()));
                     dto.setTotalRoomsAmount(room.getTotalCountOfRooms());
                     dto.setPrice(room.getPrice());
 

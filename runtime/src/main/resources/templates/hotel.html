@@ -14,7 +14,7 @@
         <h2 class="text-primary">Отели</h2>
         <div>
             <a class="btn btn-secondary me-2" th:href="@{/toRooms}">Перейти к комнатам</a>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHotelModal">Добавить отель</button>
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addHotelModal">Добавить отель</button>
         </div>
     </div>
 
@@ -25,18 +25,19 @@
             <th>Название</th>
             <th>Адрес</th>
             <th>Комнаты</th>
-            <th>Удалить</th>
+            <th>Действие</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="hotel : ${hotels}" th:attr="data-hotel-id=${hotel.id}">
             <td th:text="${hotel.id}"></td>
-            <td th:text="${hotel.name}" contenteditable="true" class="editable" th:attr="data-hotel-id=${hotel.id}, data-field='name'"></td>
-            <td th:text="${hotel.address}" contenteditable="true" class="editable" th:attr="data-hotel-id=${hotel.id}, data-field='address'"></td>
+            <td th:text="${hotel.name}"></td>
+            <td th:text="${hotel.address}"></td>
             <td>
                 <button class="btn btn-success view-rooms-btn" th:attr="data-hotel-id=${hotel.id}" data-bs-toggle="modal" data-bs-target="#roomsModal">Комнаты</button>
             </td>
             <td>
+                <button class="btn btn-primary me-2" th:attr="data-hotel-id=${hotel.id}" onclick="openEditHotelModal(this)">Обновить</button>
                 <button class="btn btn-danger" th:attr="data-hotel-id=${hotel.id}" onclick="deleteHotel(this)">Удалить</button>
             </td>
         </tr>
@@ -62,6 +63,32 @@
                         <input type="text" class="form-control" id="address" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Добавить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editHotelModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Обновить отель</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editHotelForm">
+                    <input type="hidden" id="editHotelId" name="hotelId">
+                    <div class="mb-3">
+                        <label for="editHotelName" class="form-label">Название</label>
+                        <input type="text" class="form-control" id="editHotelName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editHotelAddress" class="form-label">Адрес</label>
+                        <input type="text" class="form-control" id="editHotelAddress" required>
+                    </div>
+                    <input type="hidden" id="editRooms" name="rooms">
+                    <button type="submit" class="btn btn-primary">Обновить</button>
                 </form>
             </div>
         </div>

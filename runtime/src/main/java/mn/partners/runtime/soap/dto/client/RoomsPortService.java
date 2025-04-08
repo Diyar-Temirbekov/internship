@@ -17,7 +17,7 @@ import jakarta.xml.ws.WebServiceFeature;
  * Generated source version: 3.0
  * 
  */
-@WebServiceClient(name = "RoomsPortService", targetNamespace = "http://soap.roomservice.example.com", wsdlLocation = "http://10.60.6.41:8080/ws/rooms.wsdl")
+@WebServiceClient(name = "RoomsPortService", targetNamespace = "http://soap.roomservice.example.com", wsdlLocation = "file:/C:/Users/User/IdeaProjects/internship/runtime/src/main/resources/wsdl/rooms.wsdl")
 public class RoomsPortService
     extends Service
 {
@@ -30,7 +30,7 @@ public class RoomsPortService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("file:/C:/Users/home/IdeaProjects/internship/runtime/src/main/resources/wsdl/rooms.wsdl");
+            url = new URL("file:/C:/Users/User/IdeaProjects/internship/runtime/src/main/resources/wsdl/rooms.wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

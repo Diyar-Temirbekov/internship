@@ -1,4 +1,4 @@
-package mn.partners.runtime.soap.client;
+package mn.partners.runtime.soap.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

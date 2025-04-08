@@ -1,13 +1,13 @@
 package mn.partners.runtime.scheduler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import mn.partners.runtime.business.service.HotelRoomService;
+import mn.partners.runtime.common.enums.RoomType;
 import mn.partners.runtime.dal.entity.HotelRoomEntity;
 import mn.partners.runtime.soap.client.BookingSoapClient;
 import mn.partners.runtime.soap.dto.client.GetBookedRoomsRequest;
 import mn.partners.runtime.soap.dto.client.GetBookedRoomsResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,9 +16,8 @@ import org.springframework.ws.soap.client.SoapFaultClientException;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class PriceUpdateScheduler {
-
-    private static final Logger logger = LoggerFactory.getLogger(PriceUpdateScheduler.class);
 
     private final HotelRoomService hotelRoomService;
     private final BookingSoapClient bookingSoapClient;
@@ -44,23 +43,23 @@ public class PriceUpdateScheduler {
                     request.setHotelId(roomEntity.getHotelEntity().getId());
                     request.setRoomType(roomEntity.getRoomType().toString());
 
-                    logger.info("Планировщик запускает обновление цен для hotelId = {}, roomType = {}",
+                    log.info("Планировщик запускает обновление цен для hotelId = {}, roomType = {}",
                             request.getHotelId(), request.getRoomType());
 
                     GetBookedRoomsResponse response = bookingSoapClient.getBookedRooms(request);
                     int bookedCount = response.getCountBookedRooms();
 
-                    updateHotelRoomEntity(request.getHotelId(), request.getRoomType(), bookedCount);
+                    updateHotelRoomEntity(request.getHotelId(), RoomType.valueOf(request.getRoomType()), bookedCount);
                 } catch (SoapFaultClientException e) {
-                    logger.error("Ошибка SOAP-запроса: {}", e.getMessage());
+                    log.error("Ошибка SOAP-запроса: {}", e.getMessage());
                 }
             }
         } catch (WebServiceIOException e) {
-            logger.error("Проблемы с соединением... {}", e.getMessage());
+            log.error("Проблемы с соединением... {}", e.getMessage());
         }
     }
 
-    public void updateHotelRoomEntity(Long id, String roomType, int bookedCount) {
+    public void updateHotelRoomEntity(Long id, RoomType roomType, int bookedCount) {
         HotelRoomEntity room = hotelRoomService.getByIdAndRoomType(id, roomType);
         int baseBookedCount = room.getReservedRooms();
         int totalRooms = room.getTotalCountOfRooms();
@@ -69,7 +68,7 @@ public class PriceUpdateScheduler {
         int threshold = totalRooms / 2;
 
         if (bookedCount == baseBookedCount) {
-            logger.info("Цена комнаты осталась без изменений: {}", currentPrice);
+            log.info("Цена комнаты осталась без изменений: {}", currentPrice);
             return;
         }
 
@@ -82,18 +81,18 @@ public class PriceUpdateScheduler {
         }
 
         if (newPrice < minLimit) {
-            logger.warn("Цена ниже минимального предела ({}) и не будет обновлена.", minLimit);
+            log.warn("Цена ниже минимального предела ({}) и не будет обновлена.", minLimit);
             newPrice = currentPrice;
         }
 
         if (newPrice != currentPrice) {
-            logger.info("Цена комнаты обновлена: {} - с {} на {}", room.getRoomType(), currentPrice, newPrice);
+            log.info("Цена комнаты обновлена: {} - с {} на {}", room.getRoomType(), currentPrice, newPrice);
             room.setPrice(newPrice);
             room.setReservedRooms(bookedCount);
 
             hotelRoomService.saveRoomEntity(room);
         } else {
-            logger.info("Цена комнаты осталась без изменений: {}", currentPrice);
+            log.info("Цена комнаты осталась без изменений: {}", currentPrice);
         }
     }
 }

@@ -1,23 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
-
-    document.getElementById('addRoomForm').addEventListener('submit', function(e) {
+    document.getElementById('addRoomForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const hotelId = Number(document.getElementById('hotelId').value);
+        const hotelName = document.getElementById('hotelName').value.trim();
         const roomType = document.getElementById('roomType').value;
         const price = document.getElementById('price').value;
         const totalCountOfRooms = Number(document.getElementById('totalCountOfRooms').value);
 
-        if (!hotelId || !roomType || !price || !totalCountOfRooms) {
+        if (!hotelName || !roomType || !price || !totalCountOfRooms) {
             showNotification('Пожалуйста, заполните все поля.');
             return;
         }
 
-        fetch('api/rooms', {
+        fetch('/api/rooms', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                hotelId: hotelId,
+                hotelName: hotelName,
                 roomType: roomType,
                 price: price,
                 totalCountOfRooms: totalCountOfRooms,
@@ -37,71 +36,73 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
-    document.querySelectorAll('.editable').forEach(element => {
-        element.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
+    window.openUpdateModal = function(button) {
+        const row = button.closest('tr');
+        const cells = row.getElementsByTagName('td');
 
-                const roomId = this.getAttribute('data-room-id');
-                const field = this.getAttribute('data-field');
-                const value = this.innerText.trim();
+        const roomId = cells[0].innerText.trim();
+        const hotelName = cells[1].innerText.trim();
+        const roomType = cells[2].innerText.trim();
+        const price = cells[3].innerText.trim();
+        const totalCountOfRooms = cells[4].innerText.trim();
 
-                if (!value) {
-                    showNotification('Поле не может быть пустым.');
-                    return;
-                }
+        document.getElementById('editRoomId').value = roomId;
+        document.getElementById('editHotelName').value = hotelName;
+        document.getElementById('editRoomType').value = roomType;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editTotalCountOfRooms').value = totalCountOfRooms;
 
-                const updateData = { id: Number(roomId) };
-                if (field === 'hotelId') {
-                    updateData.hotelId = Number(value);
-                } else if (field === 'roomType') {
-                    updateData.roomType = value;
-                } else if (field === 'price') {
-                    const price = value;
-                    if (price >= 0) {
-                        updateData.price = price;
-                    } else {
-                        showNotification('Цена не может быть отрицательной.');
-                        return;
-                    }
-                } else if (field === 'totalCountOfRooms') {
-                    const totalCountOfRooms = Number(value);
-                    if (totalCountOfRooms >= 0) {
-                        updateData.totalCountOfRooms = totalCountOfRooms;
-                    } else {
-                        showNotification('Количество комнат не может быть отрицательным.');
-                        return;
-                    }
-                }
+        const editModal = new bootstrap.Modal(document.getElementById('editRoomModal'));
+        editModal.show();
+    };
 
-                fetch(`api/rooms`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData)
+    const editRoomForm = document.getElementById('editRoomForm');
+    if (editRoomForm) {
+        editRoomForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const editRoomId = document.getElementById('editRoomId').value;
+            const editHotelName = document.getElementById('editHotelName').value.trim();
+            const editRoomType = document.getElementById('editRoomType').value.trim();
+            const editPrice = document.getElementById('editPrice').value;
+            const editTotalCountOfRooms = Number(document.getElementById('editTotalCountOfRooms').value);
+
+            fetch('/api/rooms', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: editRoomId,
+                    hotelName: editHotelName,
+                    roomType: editRoomType,
+                    price: editPrice,
+                    totalCountOfRooms: editTotalCountOfRooms,
                 })
-                    .then(response => {
-                        if (response.ok) {
-                            showNotification('Комната успешно обновлена.');
-                            this.blur();
-                            this.innerText = value;
-                        } else {
-                            showNotification('Ошибка при обновлении комнаты.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Ошибка:', error);
+            })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification('Комната успешно обновлена.');
+                        window.location.reload();
+                    } else {
                         showNotification('Ошибка при обновлении комнаты.');
-                    });
-            }
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка при обновлении комнаты.');
+                });
         });
-    });
+    }
 
     window.deleteRoom = function(button) {
         const roomId = button.getAttribute('data-room-id');
 
         if (confirm('Вы уверены, что хотите удалить эту комнату?')) {
-            fetch(`api/rooms/${roomId}`, {
-                method: 'DELETE'
+            fetch(`/api/rooms/${roomId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: roomId
+                })
             })
                 .then(response => {
                     if (response.ok) {
@@ -116,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
-document.getElementById('notificationModal').addEventListener('hidden.bs.modal', function () {
+document.getElementById('notificationModal')?.addEventListener('hidden.bs.modal', function () {
     console.log('Модальное окно закрыто');
 });
 

@@ -11,7 +11,7 @@ public class HotelRoomMapper {
     public HotelRoomResponseDTO toDTO(HotelRoomEntity room) {
         HotelRoomResponseDTO hotelRoomResponseDTO = new HotelRoomResponseDTO();
         hotelRoomResponseDTO.setId(room.getId());
-        hotelRoomResponseDTO.setHotelId(room.getHotelEntity().getId());
+        hotelRoomResponseDTO.setHotelName(room.getHotelEntity().getName());
         hotelRoomResponseDTO.setRoomType(room.getRoomType());
         hotelRoomResponseDTO.setPrice(room.getPrice());
         hotelRoomResponseDTO.setTotalCountOfRooms(room.getTotalCountOfRooms());
